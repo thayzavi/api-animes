@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const res = require('express/lib/response');
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -152,7 +153,34 @@ const animes = [
     res.status(201).json(novoAnime);
   });
 
+  //Rota para atualizar 
+  app.put('/animes/:nome', (req, res) => {
+    const animeNome = req.params.nome.toLocaleLowerCase();
+    const index = animes.findIndex(anime => anime.nome.toLocaleLowerCase()=== animeNome);
+    
+    if (index === -1){
+      return res.status(400).json({error:"NOme, descrição e imagem são obrigatório "});
+    }
 
+    animes[index] = {nome, descricao, imagem};
+
+    res.json(animes[index]);
+  });
+
+  // Rota para deletar um anime
+
+  app.delete('animes/nome:', (req,res) => {
+    const animeNome = req.params.nome.toLocaleLowerCase();
+    const index = animes.findIndex(anime => anime.nome.toLocaleLowerCase() === animeNome );
+    
+    if (index === -1) {
+      return res.status(404).json({error:"Anime não encontrado"});
+    }
+
+    const animeRemovido = animes.splice(index, 1);
+
+    res.json({message:"Anime removido com sucesso ", anime: animeRemovido[0]});
+  });
   //iniciar o servidor
   app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
